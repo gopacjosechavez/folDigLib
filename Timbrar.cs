@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Xml;
-
+using System.Windows.Forms;
 
 namespace folDigLib
 {
@@ -9,7 +9,8 @@ namespace folDigLib
         public clsDatosDeRespuestaDelTimbradoFD Documento(clsDatosParaElTimbrarFD datos)
         {
             clsDatosDeRespuestaDelTimbradoFD respuesta = new clsDatosDeRespuestaDelTimbradoFD();
-            
+
+            //MessageBox.Show("Tipo de Timbrado: " + datos.tipoTimbrado);
             switch (datos.tipoTimbrado)
             {
                 case "Pruebas":
@@ -38,7 +39,6 @@ namespace folDigLib
             string txtPassw = datos.passw;
             string txtReferencia = datos.referencia;
 
-            
 
             try
             {
@@ -56,7 +56,7 @@ namespace folDigLib
                 //Timbra el documento en Folios digitales
                 respuesta = ws.TimbrarCFDI(txtUsuario, txtPassw, strXML, txtReferencia);
 
-                if (respuesta.XMLResultado != "")
+                if (respuesta.XMLResultado != "" && respuesta.XMLResultado != null)
                 {
                     RespuetaXML.LoadXml(respuesta.XMLResultado);
                     RespuetaXML.Save(xmlSalida);
@@ -74,6 +74,7 @@ namespace folDigLib
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalida(_respuesta, txtSalida);
 
+
             }
             catch (Exception ex)
             {
@@ -82,12 +83,15 @@ namespace folDigLib
                 _respuesta.codigoConfirmacion = "Error Intero";
                 _respuesta.codigoRespuesta = "Error";
                 _respuesta.mensajeError = "Error al procesar timbrado";
-                _respuesta.mensajeErrorDetallado = "ERROR: " + ex.Message;
+                _respuesta.mensajeErrorDetallado = "ERROR: " + ex.InnerException.Message;
                 _respuesta.operacionExitosa = "False";
                 _respuesta.xmlResultado = "";
                 _respuesta.pdfResultado = "";
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalida(_respuesta, txtSalida);
+
+                MessageBox.Show("Timbrar-5 " + ex.InnerException.Message);
+
             }
 
             return _respuesta;
@@ -128,7 +132,7 @@ namespace folDigLib
                 //Timbra el documento en Folios digitales
                 respuesta = ws.TimbrarCFDI(txtUsuario, txtPassw, strXML, txtReferencia);
 
-                if (respuesta.XMLResultado != "")
+                if (respuesta.XMLResultado != "" && respuesta.XMLResultado != null)
                 {
                     RespuetaXML.LoadXml(respuesta.XMLResultado);
                     RespuetaXML.Save(xmlSalida);
@@ -153,10 +157,10 @@ namespace folDigLib
             {
                 //Guarda los datos de respuesta en case de haber un error
                 _respuesta.archivo = datos.rutaXML + xmlSalida;
-                _respuesta.codigoConfirmacion = "Error Intero";
+                _respuesta.codigoConfirmacion = "Error Interno";
                 _respuesta.codigoRespuesta = "Error";
                 _respuesta.mensajeError = "Error al procesar timbrado";
-                _respuesta.mensajeErrorDetallado = "ERROR: " + ex.Message;
+                _respuesta.mensajeErrorDetallado = "ERROR: " + ex.InnerException.Message;
                 _respuesta.operacionExitosa = "False";
                 _respuesta.xmlResultado = "";
                 _respuesta.pdfResultado = "";
