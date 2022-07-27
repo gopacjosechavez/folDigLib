@@ -1,7 +1,5 @@
-C:\GitHub\folDigLib\bin\Release\folDigLib.dll.config
 C:\GitHub\folDigLib\bin\Release\folDigLib.dll
 C:\GitHub\folDigLib\bin\Release\folDigLib.pdb
 C:\GitHub\folDigLib\obj\Release\folDigLib.csproj.CoreCompileInputs.cache
 C:\GitHub\folDigLib\obj\Release\folDigLib.dll
 C:\GitHub\folDigLib\obj\Release\folDigLib.pdb
-C:\GitHub\folDigLib\obj\Release\folDigLib.csprojAssemblyReference.cache

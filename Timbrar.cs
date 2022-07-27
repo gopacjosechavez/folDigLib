@@ -28,8 +28,8 @@ namespace folDigLib
         //------------------------------------------------------------------------
         public clsDatosDeRespuestaDelTimbradoFD timbrarPruebas(clsDatosParaElTimbrarFD datos)
         {
-            clsDatosDeRespuestaDelTimbradoFD _respuesta = new clsDatosDeRespuestaDelTimbradoFD();
 
+            clsDatosDeRespuestaDelTimbradoFD _respuesta = new clsDatosDeRespuestaDelTimbradoFD();
             //Datos para los Archivos de salida
             string xmlSalida = datos.xmlSalida;// datos.rutaXML + datos.archivoXML;
             string txtSalida = datos.txtSalida;// datos.rutaXML + "Historico\\" + datos.archivoTXT;
@@ -38,7 +38,6 @@ namespace folDigLib
             string txtUsuario = datos.usuario;
             string txtPassw = datos.passw;
             string txtReferencia = datos.referencia;
-
 
             try
             {
@@ -90,7 +89,6 @@ namespace folDigLib
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalida(_respuesta, txtSalida);
 
-                MessageBox.Show("Timbrar-5 " + ex.InnerException.Message);
 
             }
 

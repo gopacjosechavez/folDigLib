@@ -63,7 +63,6 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Connected Services\WSCFDI\folDigLib.WSCFDI.RespuestaAceptacionRechazo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

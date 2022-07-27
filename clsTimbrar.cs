@@ -92,8 +92,8 @@ namespace folDigLib
         public string folioSustitucion { get; set; }
         public string motivo { get; set; }
         public string rfcReceptor { get; set; }
-        public decimal total { get; set; }
-        public decimal uuidDocumento { get; set; }
+        public decimal? total { get; set; }
+        public string uuidDocumento { get; set; }
         public string rutaXML { get; set; }
         public string tipoTimbrado { get; set; }
         public string xmlSalida { get; set; }

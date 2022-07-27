@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Windows.Forms;
 
 namespace folDigLib
 {
@@ -15,7 +16,7 @@ namespace folDigLib
             {
                 case "Pruebas":
                     //Guarda los datos de respuesta del timbrado en un archivo fisico
-                    _respuesta.codigoResultado = "SOA9999";
+                    _respuesta.codigoResultado = "SOA9998";
                     _respuesta.esCancelable = "ErrorGopac";
                     _respuesta.mensajeResultado = "";
                     _respuesta.operacionExitosa = "False";
@@ -38,55 +39,65 @@ namespace folDigLib
             clsDatosDeRespuestaDelaCancelacionFD _respuesta = new clsDatosDeRespuestaDelaCancelacionFD();
             string txtUsuario = datos.usuario;
             string txtPassw = datos.passw;
-            string txtRfcEmisor = "";
-            string txtClavePrivadaBase64 = "";
-            string txtPasswordClavePrivadaBase64 = "";
+            string txtRfcEmisor = datos.rfcEmisor;// "";
+            string txtClavePrivadaBase64 = datos.clavePrivadaBase64;// "";
+            string txtPasswordClavePrivadaBase64 = datos.passwClavePrivadaBase64;// "";
 
-            string txtFolioSustitucion = "";
-            string txtMotivo = "";
-            string txtRfcReceptor = "";
-            decimal txtTotal = 0;
-            string txtUuidDocumento = "";
+            string txtFolioSustitucion = datos.folioSustitucion;// "";
+            string txtMotivo = datos.motivo;// "";
+            string txtRfcReceptor = datos.rfcReceptor;// "";
+            decimal txtTotal = Convert.ToDecimal(datos.total);// 0;
+            string txtUuidDocumento = datos.uuidDocumento;// "";
 
             //Nombre del archivo xml acuse
             string xmlSalida = datos.xmlSalida;// + "Historico\\" + pArchivo + "Can_Acuse.xml";
             string txtSalida = datos.txtSalida;// pRutaSalida + "Historico\\" + pArchivo + "Can.txt"; ;
-
 
             try
             {
                 //------------------------------------------------------------------------------------------------
                 //Instancia del ws
                 //------------------------------------------------------------------------------------------------
-                WSCFDI.WSCFDI33Client ws = new WSCFDI.WSCFDI33Client();
+                folDigLib.WSCFDI.WSCFDI33Client ws = new folDigLib.WSCFDI.WSCFDI33Client();
                 //------------------------------------------------------------------------------------------------
                 //Instancia de la respuesta del ws
                 //------------------------------------------------------------------------------------------------
-                WSCFDI.RespuestaCancelacion Respuesta = new WSCFDI.RespuestaCancelacion();
-                
+                folDigLib.WSCFDI.RespuestaCancelacion Respuesta = new folDigLib.WSCFDI.RespuestaCancelacion();
 
-                List<WSCFDI.DetalleCFDICancelacion> objDetalle = new List<WSCFDI.DetalleCFDICancelacion>();
+                List<folDigLib.WSCFDI.DetalleCFDICancelacion> objDetalle = new List<folDigLib.WSCFDI.DetalleCFDICancelacion>();
                 objDetalle.Add(new WSCFDI.DetalleCFDICancelacion
                 {
                     //EsCancelable = total <= 1000 ? "Cancelable sin aceptación" : "Cancelable con aceptación",
-                    FolioSustitucion = txtFolioSustitucion == "" ? null : txtFolioSustitucion,
+                    FolioSustitucion = txtFolioSustitucion == null ? "" : txtFolioSustitucion,
                     Motivo = txtMotivo,
                     RFCReceptor = txtRfcReceptor,
                     Total = txtTotal,
                     UUID = txtUuidDocumento
                 });
                 int objetos = objDetalle.Count;
-                WSCFDI.DetalleCFDICancelacion[] DetalleCancelacion = new WSCFDI.DetalleCFDICancelacion[objetos];
+                folDigLib.WSCFDI.DetalleCFDICancelacion[] DetalleCancelacion = new folDigLib.WSCFDI.DetalleCFDICancelacion[objetos];
                 DetalleCancelacion = objDetalle.ToArray();
 
                 //------------------------------------------------------------------------------------------------
                 //Llamado al metodo de cancelacion
                 //------------------------------------------------------------------------------------------------
+                //MessageBox.Show(txtUsuario);
+                //MessageBox.Show(txtPassw);
+                //MessageBox.Show(txtRfcEmisor);
+                //MessageBox.Show(DetalleCancelacion[0].FolioSustitucion);
+                //MessageBox.Show(DetalleCancelacion[0].Motivo);
+                //MessageBox.Show(DetalleCancelacion[0].RFCReceptor);
+                //MessageBox.Show(DetalleCancelacion[0].Total.ToString());
+                //MessageBox.Show(DetalleCancelacion[0].UUID);
+
+                //MessageBox.Show(txtClavePrivadaBase64);
+                //MessageBox.Show(txtPasswordClavePrivadaBase64);
+
                 Respuesta = ws.CancelarCFDI(txtUsuario, txtPassw, txtRfcEmisor, DetalleCancelacion, txtClavePrivadaBase64, txtPasswordClavePrivadaBase64);
                 //------------------------------------------------------------------------------------------------
                 //Instancia de la respuesta masica de cancelacion
                 //------------------------------------------------------------------------------------------------
-                List<WSCFDI.DetalleCancelacion> RespuestaCancelacionDetallada = new List<WSCFDI.DetalleCancelacion>();
+                List<folDigLib.WSCFDI.DetalleCancelacion> RespuestaCancelacionDetallada = new List<folDigLib.WSCFDI.DetalleCancelacion>();
 
                 if (Respuesta.DetallesCancelacion != null)
                 {
@@ -108,7 +119,15 @@ namespace folDigLib
                 else
                 {
                     //Guarda los datos de respuesta del timbrado en un archivo fisico
-                    _respuesta.codigoResultado = "SOA9999";
+                    if (Respuesta.MensajeError == "Error de autenticación de usuario.")
+                    {
+                        _respuesta.codigoResultado = "SOA9996";
+                    }
+                    else
+                    {
+                        _respuesta.codigoResultado = "SOA9997";
+                    }
+
                     _respuesta.esCancelable = "";
                     _respuesta.mensajeResultado = "";
                     _respuesta.operacionExitosa = Respuesta.OperacionExitosa.ToString();
@@ -142,10 +161,6 @@ namespace folDigLib
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalidaCancelacion(_respuesta, txtSalida);
             }
-
-
-
-
             return _respuesta;
         }
     }
