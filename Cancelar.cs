@@ -14,6 +14,7 @@ namespace folDigLib
             string txtSalida = datos.txtSalida;
             switch (datos.tipoTimbrado)
             {
+
                 case "Pruebas":
                     //Guarda los datos de respuesta del timbrado en un archivo fisico
                     _respuesta.codigoResultado = "SOA9998";
