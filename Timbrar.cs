@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml;
-using System.Windows.Forms;
 
 namespace folDigLib
 {
@@ -28,7 +27,6 @@ namespace folDigLib
         //------------------------------------------------------------------------
         public clsDatosDeRespuestaDelTimbradoFD timbrarPruebas(clsDatosParaElTimbrarFD datos)
         {
-
             clsDatosDeRespuestaDelTimbradoFD _respuesta = new clsDatosDeRespuestaDelTimbradoFD();
             //Datos para los Archivos de salida
             string xmlSalida = datos.xmlSalida;// datos.rutaXML + datos.archivoXML;
@@ -55,6 +53,7 @@ namespace folDigLib
                 //Timbra el documento en Folios digitales
                 respuesta = ws.TimbrarCFDI(txtUsuario, txtPassw, strXML, txtReferencia);
 
+
                 if (respuesta.XMLResultado != "" && respuesta.XMLResultado != null)
                 {
                     RespuetaXML.LoadXml(respuesta.XMLResultado);
@@ -70,9 +69,9 @@ namespace folDigLib
                 _respuesta.operacionExitosa = respuesta.OperacionExitosa.ToString();
                 _respuesta.xmlResultado = respuesta.XMLResultado;
                 _respuesta.pdfResultado = respuesta.PDFResultado;
+
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalida(_respuesta, txtSalida);
-
 
             }
             catch (Exception ex)

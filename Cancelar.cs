@@ -44,6 +44,8 @@ namespace folDigLib
             string txtClavePrivadaBase64 = datos.clavePrivadaBase64;// "";
             string txtPasswordClavePrivadaBase64 = datos.passwClavePrivadaBase64;// "";
 
+            if (datos.folioSustitucion == "0")
+                datos.folioSustitucion = "";
             string txtFolioSustitucion = datos.folioSustitucion;// "";
             string txtMotivo = datos.motivo;// "";
             string txtRfcReceptor = datos.rfcReceptor;// "";
