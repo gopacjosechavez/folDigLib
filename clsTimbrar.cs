@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 
 namespace folDigLib
@@ -29,7 +30,6 @@ namespace folDigLib
             }
             catch (Exception ex)
             {
-
                 throw;
             }
 

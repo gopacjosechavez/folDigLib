@@ -133,6 +133,7 @@
     <Compile Include="Cancelar.cs" />
     <Compile Include="cfdi40.cs" />
     <Compile Include="clsTimbrar.cs" />
+    <Compile Include="ConsultaCreditos.cs" />
     <Compile Include="Generar.cs" />
     <Compile Include="Mail.cs" />
     <Compile Include="opensslkey.cs" />

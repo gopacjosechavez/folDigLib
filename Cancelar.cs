@@ -84,17 +84,6 @@ namespace folDigLib
                 //------------------------------------------------------------------------------------------------
                 //Llamado al metodo de cancelacion
                 //------------------------------------------------------------------------------------------------
-                //MessageBox.Show(txtUsuario);
-                //MessageBox.Show(txtPassw);
-                //MessageBox.Show(txtRfcEmisor);
-                //MessageBox.Show(DetalleCancelacion[0].FolioSustitucion);
-                //MessageBox.Show(DetalleCancelacion[0].Motivo);
-                //MessageBox.Show(DetalleCancelacion[0].RFCReceptor);
-                //MessageBox.Show(DetalleCancelacion[0].Total.ToString());
-                //MessageBox.Show(DetalleCancelacion[0].UUID);
-
-                //MessageBox.Show(txtClavePrivadaBase64);
-                //MessageBox.Show(txtPasswordClavePrivadaBase64);
 
                 Respuesta = ws.CancelarCFDI(txtUsuario, txtPassw, txtRfcEmisor, DetalleCancelacion, txtClavePrivadaBase64, txtPasswordClavePrivadaBase64);
                 //------------------------------------------------------------------------------------------------

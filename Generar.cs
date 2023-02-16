@@ -193,13 +193,6 @@ namespace folDigLib
                     {
                         resultado.xml = respuestaPAC.xmlResultado;
                     }
-                    //    //MessageBox.Show(respuestaPAC.archivo);
-                    //    //MessageBox.Show(respuestaPAC.codigoConfirmacion);
-                    //    //MessageBox.Show(respuestaPAC.codigoRespuesta);
-                    //    //MessageBox.Show(respuestaPAC.mensajeError);
-                    //    //MessageBox.Show(respuestaPAC.mensajeErrorDetallado);
-                    //    //MessageBox.Show(respuestaPAC.operacionExitosa);
-                    //    //MessageBox.Show(respuestaPAC.xmlResultado);
                 }
             }
             catch (Exception ex)
@@ -1193,7 +1186,6 @@ namespace folDigLib
                         if (contador > largo)
                             cadena = longitud - (contador - largo);
 
-                        //MessageBox.Show("1.2. Renglon: " + i.ToString() + ", posini = " + posini.ToString() + ", cadena = " + cadena.ToString() + ", largo: " + largo + ", contador: " + contador);
 
                         if (textofinal == "")
                         {
@@ -1238,7 +1230,6 @@ namespace folDigLib
                         if (contador > largo)
                             cadena = longitud - (contador - largo);
 
-                        //MessageBox.Show("0. Renglon: " + i.ToString() + ", posini = " + posini.ToString() + ", cadena = " + cadena.ToString() + ", largo: " + largo + ", contador: " + contador);
 
                         if (textofinal == "")
                         {
@@ -1280,7 +1271,6 @@ namespace folDigLib
                         if (contador > largo)
                             cadena = longitud - (contador - largo);
 
-                        //MessageBox.Show("0. Renglon: " + i.ToString() + ", posini = " + posini.ToString() + ", cadena = " + cadena.ToString() + ", largo: " + largo + ", contador: " + contador);
 
                         if (textofinal == "")
                         {
