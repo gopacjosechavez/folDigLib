@@ -67,6 +67,12 @@ namespace folDigLib
                 //------------------------------------------------------------------------------------------------
                 folDigLib.WSCFDI.RespuestaCancelacion Respuesta = new folDigLib.WSCFDI.RespuestaCancelacion();
 
+                //MessageBox.Show("txtFolioSustitucion: " + txtFolioSustitucion + 
+                //    "txtMotivo: " + txtMotivo + 
+                //    "txtRfcReceptor: " + txtRfcReceptor + 
+                //    "txtTotal: " + txtTotal + 
+                //    ", txtUuidDocumento: " + txtUuidDocumento);
+
                 List<folDigLib.WSCFDI.DetalleCFDICancelacion> objDetalle = new List<folDigLib.WSCFDI.DetalleCFDICancelacion>();
                 objDetalle.Add(new WSCFDI.DetalleCFDICancelacion
                 {
@@ -151,6 +157,7 @@ namespace folDigLib
                 _respuesta.mensajeDetallado = ex.Message;
                 _respuesta.xmlResultado = "";
                 clsTimbrar timbrar = new clsTimbrar();
+
                 timbrar.GuardarArchivoSalidaCancelacion(_respuesta, txtSalida);
             }
             return _respuesta;

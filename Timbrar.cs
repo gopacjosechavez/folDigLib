@@ -9,7 +9,7 @@ namespace folDigLib
         public clsDatosDeRespuestaDelTimbradoFD Documento(clsDatosParaElTimbrarFD datos)
         {
             clsDatosDeRespuestaDelTimbradoFD respuesta = new clsDatosDeRespuestaDelTimbradoFD();
-
+            
             switch (datos.tipoTimbrado)
             {
                 case "Pruebas":
@@ -31,6 +31,7 @@ namespace folDigLib
             //Datos para los Archivos de salida
             string xmlSalida = datos.xmlSalida;// datos.rutaXML + datos.archivoXML;
             string txtSalida = datos.txtSalida;// datos.rutaXML + "Historico\\" + datos.archivoTXT;
+
             //Datos para el timbrado
             string txtUsuario = datos.usuario;
             string txtPassw = datos.passw;
@@ -105,8 +106,6 @@ namespace folDigLib
             string txtUsuario = datos.usuario;
             string txtPassw = datos.passw;
             string txtReferencia = datos.referencia;
-
-
 
             try
             {
