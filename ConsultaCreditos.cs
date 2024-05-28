@@ -26,6 +26,7 @@ namespace folDigLib
 
                 RespuestaServicio = ServicioTimbrado.ConsultarCreditos(strUser, strPassword);
 
+
                 //Obtiene la respuesta del web services
                 if (RespuestaServicio.OperacionExitosa == true)
                 {
