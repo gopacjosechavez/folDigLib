@@ -734,14 +734,20 @@ namespace folDigLib
             string moneda = "P";
             string simboloMoneda = "$";
             //string directorioDestino = System.IO.Directory.GetCurrentDirectory();
-            string pathLogo = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Datos", "Imagenes", "Logo.bmp");
-            if (!System.IO.File.Exists(pathLogo))
-            {
-                pathLogo = System.IO.Directory.GetCurrentDirectory() + "\\Datos\\Imagenes\\Logo.bmp";
-            }
+            string pathLogo = "";
+
+
+
+
 
             public void documento(spSoaWeb_CFDI40_DatosGenerales_Result spDatos, List<spSoaWeb_CFDI40_Conceptos_Result> spConceptos, List<spSoaWeb_CFDI40_Impuestos_Result> spImpuestos, List<spSoaWeb_CFDI40_DatosRealacionados_Result> spDatosRelacionados, int totalPaginas, string nombrePDF, string tipoDeImpresion)
             {
+                pathLogo = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Datos", "Imagenes", "Logo.bmp");
+                if (!System.IO.File.Exists(pathLogo))
+                {
+                    pathLogo = System.IO.Directory.GetCurrentDirectory() + "\\Datos\\Imagenes\\Logo.bmp";
+                }
+
                 MemoryStream ms = new MemoryStream();
                 PdfWriter pw = new PdfWriter(ms);
                 PdfDocument pdfDocument = new PdfDocument(pw);
