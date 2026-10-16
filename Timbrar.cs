@@ -9,17 +9,71 @@ namespace folDigLib
         public clsDatosDeRespuestaDelTimbradoFD Documento(clsDatosParaElTimbrarFD datos)
         {
             clsDatosDeRespuestaDelTimbradoFD respuesta = new clsDatosDeRespuestaDelTimbradoFD();
-            
-            switch (datos.tipoTimbrado)
+            string tipo = (datos.tipoTimbrado ?? "").Trim();
+            if (tipo.Equals("Pruebas", StringComparison.OrdinalIgnoreCase) || tipo.Equals("Prueba", StringComparison.OrdinalIgnoreCase))
             {
-                case "Pruebas":
-                    respuesta = timbrarPruebas(datos);
-                    break;
-                case "Produccion":
-                    respuesta = timbrarProductivo(datos);
-                    break;
+                respuesta = timbrarPruebas(datos);
+            }
+            else
+            {
+                respuesta = timbrarProductivo(datos);
             }
             return respuesta;
+        }
+
+        private WSCFDI.WSCFDI33Client CrearClienteProductivo()
+        {
+            try
+            {
+                return new WSCFDI.WSCFDI33Client("soapHttpEndpointHttps");
+            }
+            catch
+            {
+                try
+                {
+                    return new WSCFDI.WSCFDI33Client("soapHttpEndpoint1");
+                }
+                catch
+                {
+                    try
+                    {
+                        return new WSCFDI.WSCFDI33Client();
+                    }
+                    catch
+                    {
+                        var binding = new System.ServiceModel.BasicHttpBinding(System.ServiceModel.BasicHttpSecurityMode.Transport);
+                        binding.MaxReceivedMessageSize = 2147483647;
+                        binding.MaxBufferSize = 2147483647;
+                        binding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
+                        var address = new System.ServiceModel.EndpointAddress("https://www.foliosdigitalespac.com/WSTimbrado33/WSCFDI33.svc");
+                        return new WSCFDI.WSCFDI33Client(binding, address);
+                    }
+                }
+            }
+        }
+
+        private WSPruebas.WSCFDI33Client CrearClientePruebas()
+        {
+            try
+            {
+                return new WSPruebas.WSCFDI33Client("soapHttpEndpoint");
+            }
+            catch
+            {
+                try
+                {
+                    return new WSPruebas.WSCFDI33Client();
+                }
+                catch
+                {
+                    var binding = new System.ServiceModel.BasicHttpBinding();
+                    binding.MaxReceivedMessageSize = 2147483647;
+                    binding.MaxBufferSize = 2147483647;
+                    binding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
+                    var address = new System.ServiceModel.EndpointAddress("http://app.foliosdigitalespac.com/WSTimbrado33Test/WSCFDI33.svc");
+                    return new WSPruebas.WSCFDI33Client(binding, address);
+                }
+            }
         }
 
         //------------------------------------------------------------------------
@@ -28,28 +82,23 @@ namespace folDigLib
         public clsDatosDeRespuestaDelTimbradoFD timbrarPruebas(clsDatosParaElTimbrarFD datos)
         {
             clsDatosDeRespuestaDelTimbradoFD _respuesta = new clsDatosDeRespuestaDelTimbradoFD();
-            //Datos para los Archivos de salida
-            string xmlSalida = datos.xmlSalida;// datos.rutaXML + datos.archivoXML;
-            string txtSalida = datos.txtSalida;// datos.rutaXML + "Historico\\" + datos.archivoTXT;
+            string xmlSalida = datos.xmlSalida;
+            string txtSalida = datos.txtSalida;
 
-            //Datos para el timbrado
             string txtUsuario = datos.usuario;
             string txtPassw = datos.passw;
             string txtReferencia = datos.referencia;
             try
             {
-                //Instancias de Pruebas
-                WSPruebas.WSCFDI33Client ws = new WSPruebas.WSCFDI33Client();
+                WSPruebas.WSCFDI33Client ws = CrearClientePruebas();
                 WSPruebas.RespuestaTFD33 respuesta = new WSPruebas.RespuestaTFD33();
 
-                //Carga el xml a timbrar
                 XmlDocument doc = new XmlDocument();
                 XmlDocument RespuetaXML = new XmlDocument();
 
                 doc.Load(xmlSalida);
                 string strXML = doc.OuterXml;
 
-                //Timbra el documento en Folios digitales
                 respuesta = ws.TimbrarCFDI(txtUsuario, txtPassw, strXML, txtReferencia);
 
                 if (respuesta.XMLResultado != "" && respuesta.XMLResultado != null)
@@ -58,7 +107,6 @@ namespace folDigLib
                     RespuetaXML.Save(xmlSalida);
                 }
 
-                //Guarda los datos de respuesta del timbrado en un archivo fisico
                 _respuesta.archivo = datos.rutaXML + xmlSalida;
                 _respuesta.codigoConfirmacion = respuesta.CodigoConfirmacion;
                 _respuesta.codigoRespuesta = respuesta.CodigoRespuesta;
@@ -73,22 +121,19 @@ namespace folDigLib
             }
             catch (Exception ex)
             {
-                //Guarda los datos de respuesta en case de haber un error
                 _respuesta.archivo = datos.rutaXML + xmlSalida;
-                _respuesta.codigoConfirmacion = "Error Intero";
+                _respuesta.codigoConfirmacion = "Error Interno";
                 _respuesta.codigoRespuesta = "Error";
                 _respuesta.mensajeError = "Error al procesar timbrado";
-                _respuesta.mensajeErrorDetallado = "ERROR: " + ex.InnerException.Message;
+                _respuesta.mensajeErrorDetallado = "ERROR: " + (ex.InnerException != null ? ex.InnerException.Message : ex.Message);
                 _respuesta.operacionExitosa = "False";
                 _respuesta.xmlResultado = "";
                 _respuesta.pdfResultado = "";
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalida(_respuesta, txtSalida);
-
             }
 
             return _respuesta;
-
         }
 
         //------------------------------------------------------------------------
@@ -98,29 +143,24 @@ namespace folDigLib
         {
             clsDatosDeRespuestaDelTimbradoFD _respuesta = new clsDatosDeRespuestaDelTimbradoFD();
 
-            //Datos para los Archivos de salida
             string xmlSalida = datos.rutaXML + datos.archivoXML;
             string txtSalida = datos.rutaXML + "Historico\\" + datos.archivoTXT;
 
-            //Datos para el timbrado
             string txtUsuario = datos.usuario;
             string txtPassw = datos.passw;
             string txtReferencia = datos.referencia;
 
             try
             {
-                //Instancias de productivo
-                WSCFDI.WSCFDI33Client ws = new WSCFDI.WSCFDI33Client();
+                WSCFDI.WSCFDI33Client ws = CrearClienteProductivo();
                 WSCFDI.RespuestaTFD33 respuesta = new WSCFDI.RespuestaTFD33();
 
-                //Carga el xml a timbrar
                 XmlDocument doc = new XmlDocument();
                 XmlDocument RespuetaXML = new XmlDocument();
 
                 doc.Load(xmlSalida);
                 string strXML = doc.OuterXml;
 
-                //Timbra el documento en Folios digitales
                 respuesta = ws.TimbrarCFDI(txtUsuario, txtPassw, strXML, txtReferencia);
 
                 if (respuesta.XMLResultado != "" && respuesta.XMLResultado != null)
@@ -129,7 +169,6 @@ namespace folDigLib
                     RespuetaXML.Save(xmlSalida);
                 }
 
-                //Guarda los datos de respuesta del timbrado en un archivo fisico
                 _respuesta.archivo = datos.rutaXML + xmlSalida;
                 _respuesta.codigoConfirmacion = respuesta.CodigoConfirmacion;
                 _respuesta.codigoRespuesta = respuesta.CodigoRespuesta;
@@ -140,18 +179,14 @@ namespace folDigLib
                 _respuesta.pdfResultado = respuesta.PDFResultado;
                 clsTimbrar timbrar = new clsTimbrar();
                 timbrar.GuardarArchivoSalida(_respuesta, txtSalida);
-
-
-
             }
             catch (Exception ex)
             {
-                //Guarda los datos de respuesta en case de haber un error
                 _respuesta.archivo = datos.rutaXML + xmlSalida;
                 _respuesta.codigoConfirmacion = "Error Interno";
                 _respuesta.codigoRespuesta = "Error";
                 _respuesta.mensajeError = "Error al procesar timbrado";
-                _respuesta.mensajeErrorDetallado = "ERROR: " + ex.InnerException.Message;
+                _respuesta.mensajeErrorDetallado = "ERROR: " + (ex.InnerException != null ? ex.InnerException.Message : ex.Message);
                 _respuesta.operacionExitosa = "False";
                 _respuesta.xmlResultado = "";
                 _respuesta.pdfResultado = "";
@@ -160,7 +195,6 @@ namespace folDigLib
             }
 
             return _respuesta;
-
         }
     }
 }
