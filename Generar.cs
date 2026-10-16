@@ -1317,11 +1317,51 @@ namespace folDigLib
                 //tablaSellos.AddCell(cell);
                 //------------------------------------------------------------------
 
-                string nombreQR = spDatos.rutaArchivoCBB;// .rutaCBB;// @"C:\Temp\timbrar\QR_" + spDatos.referencia.Substring(1) + ".jpg";
-                //Genera imagen del QR
-                if (File.Exists(nombreQR))
+                string nombreQR = !string.IsNullOrEmpty(spDatos.rutaArchivoCBB) && File.Exists(spDatos.rutaArchivoCBB)
+                    ? spDatos.rutaArchivoCBB
+                    : (!string.IsNullOrEmpty(spDatos.rutaCBB) && File.Exists(spDatos.rutaCBB) ? spDatos.rutaCBB : string.Empty);
+
+                byte[] bytesQR = null;
+                if (!string.IsNullOrEmpty(nombreQR) && File.Exists(nombreQR))
                 {
-                    iText.Layout.Element.Image img = new iText.Layout.Element.Image(ImageDataFactory.Create(nombreQR));
+                    try { bytesQR = File.ReadAllBytes(nombreQR); } catch { }
+                }
+
+                if ((bytesQR == null || bytesQR.Length == 0) && !string.IsNullOrWhiteSpace(spDatos.timbreUUID))
+                {
+                    try
+                    {
+                        string selloDer = "";
+                        if (!string.IsNullOrEmpty(spDatos.sellloSAT) && spDatos.sellloSAT.Length >= 8)
+                        {
+                            selloDer = spDatos.sellloSAT.Substring(spDatos.sellloSAT.Length - 8);
+                        }
+                        decimal totalDoc = spDatos.total ?? 0m;
+                        string contenidoQR = string.Format(
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            "https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?id={0}&re={1}&rr={2}&tt={3:0.000000}&fe={4}",
+                            spDatos.timbreUUID, spDatos.emisorRFC, spDatos.receptorRfc, totalDoc, selloDer);
+                        bytesQR = GetImagenQRByte(contenidoQR);
+
+                        string rutaParaGuardar = !string.IsNullOrEmpty(spDatos.rutaArchivoCBB) ? spDatos.rutaArchivoCBB : spDatos.rutaCBB;
+                        if (!string.IsNullOrEmpty(rutaParaGuardar) && bytesQR != null && bytesQR.Length > 0)
+                        {
+                            try
+                            {
+                                string dir = System.IO.Path.GetDirectoryName(rutaParaGuardar);
+                                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                                File.WriteAllBytes(rutaParaGuardar, bytesQR);
+                            }
+                            catch { }
+                        }
+                    }
+                    catch { }
+                }
+
+                //Genera imagen del QR
+                if (bytesQR != null && bytesQR.Length > 0)
+                {
+                    iText.Layout.Element.Image img = new iText.Layout.Element.Image(ImageDataFactory.Create(bytesQR));
                     img.SetWidth(45);
                     img.SetHeight(45);
 
@@ -1333,7 +1373,6 @@ namespace folDigLib
                     cell = new Cell().Add(new Paragraph("").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
                     tablaSello.AddCell(cell);
                 }
-
                 cell = new Cell().Add(tablaSellos).AddStyle(styleCell);
                 tablaSello.AddCell(cell);
                 doc.Add(tablaSello);
