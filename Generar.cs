@@ -272,7 +272,7 @@ namespace folDigLib
                 receptor.Rfc = spDatosGenerales.receptorRfc;
                 receptor.Nombre = spDatosGenerales.receptorNombre;
                 //receptor.ResidenciaFiscal = "";
-                receptor.DomicilioFiscalReceptor = spDatosGenerales.receptorDomicilioFiscal;
+                string cpRec1 = (spDatosGenerales.receptorDomicilioFiscal ?? string.Empty).Trim(); if (!string.IsNullOrEmpty(cpRec1) && cpRec1.Length <= 5) { cpRec1 = cpRec1.PadLeft(5, '0'); } receptor.DomicilioFiscalReceptor = cpRec1;
                 receptor.RegimenFiscalReceptor = spDatosGenerales.receptorRegimenFiscal;
                 receptor.UsoCFDI = spDatosGenerales.usoCFDI;
                 comprobante.Receptor = receptor;
@@ -406,7 +406,7 @@ namespace folDigLib
                 receptor.Rfc = datos.receptorRfc;
                 receptor.Nombre = datos.receptorNombre;
                 //receptor.ResidenciaFiscal = "";
-                receptor.DomicilioFiscalReceptor = datos.receptorDomicilioFiscal;
+                string cpRec2 = (datos.receptorDomicilioFiscal ?? string.Empty).Trim(); if (!string.IsNullOrEmpty(cpRec2) && cpRec2.Length <= 5) { cpRec2 = cpRec2.PadLeft(5, '0'); } receptor.DomicilioFiscalReceptor = cpRec2;
                 receptor.RegimenFiscalReceptor = datos.receptorRegimenFiscal;
                 receptor.UsoCFDI = datos.usoCFDI;
                 comprobante.Receptor = receptor;
