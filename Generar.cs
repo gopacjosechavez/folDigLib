@@ -533,7 +533,14 @@ namespace folDigLib
                 // y se guarda el string en un archivo 
                 //--------------------------------------
 
-                Clipboard.SetDataObject(sXml, true);
+                try
+                {
+                    if (System.Threading.Thread.CurrentThread.GetApartmentState() == System.Threading.ApartmentState.STA)
+                    {
+                        Clipboard.SetDataObject(sXml, true);
+                    }
+                }
+                catch { }
 
                 Encoding utf8 = Encoding.UTF8;
                 System.IO.File.WriteAllText(pathXML, sXml, utf8);
@@ -727,7 +734,11 @@ namespace folDigLib
             string moneda = "P";
             string simboloMoneda = "$";
             //string directorioDestino = System.IO.Directory.GetCurrentDirectory();
-            string pathLogo = System.IO.Directory.GetCurrentDirectory() + "\\Datos\\Imagenes\\Logo.bmp";
+            string pathLogo = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Datos", "Imagenes", "Logo.bmp");
+            if (!System.IO.File.Exists(pathLogo))
+            {
+                pathLogo = System.IO.Directory.GetCurrentDirectory() + "\\Datos\\Imagenes\\Logo.bmp";
+            }
 
             public void documento(spSoaWeb_CFDI40_DatosGenerales_Result spDatos, List<spSoaWeb_CFDI40_Conceptos_Result> spConceptos, List<spSoaWeb_CFDI40_Impuestos_Result> spImpuestos, List<spSoaWeb_CFDI40_DatosRealacionados_Result> spDatosRelacionados, int totalPaginas, string nombrePDF, string tipoDeImpresion)
             {
@@ -738,7 +749,15 @@ namespace folDigLib
                 doc.SetMargins(85, 35, 50, 35);
 
                 //Genera imagen del logotipo
-                iText.Layout.Element.Image img = new iText.Layout.Element.Image(ImageDataFactory.Create(pathLogo));
+                iText.Layout.Element.Image img = null;
+                if (System.IO.File.Exists(pathLogo))
+                {
+                    try
+                    {
+                        img = new iText.Layout.Element.Image(ImageDataFactory.Create(pathLogo));
+                    }
+                    catch { }
+                }
 
                 //Genera encabezado y pie de pagina
                 pdfDocument.AddEventHandler(PdfDocumentEvent.START_PAGE, new HeaderEventHandler(img, spDatos, totalPaginas, tipoDeImpresion));
@@ -1506,10 +1525,16 @@ namespace folDigLib
                 cell = new Cell().Add(new Paragraph("").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //---------------------------------------------------
-                Img.SetWidth(80);
-                Img.SetHeight(45);
-                //logotipo
-                cell = new Cell().Add(Img).AddStyle(styleCell);
+                if (Img != null)
+                {
+                    Img.SetWidth(80);
+                    Img.SetHeight(45);
+                    cell = new Cell().Add(Img).AddStyle(styleCell);
+                }
+                else
+                {
+                    cell = new Cell().Add(new Paragraph(spDatos.emisorNombre ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
+                }
                 tabla.AddCell(cell).SetBorderBottom(new SolidBorder(ColorConstants.BLACK, 0.5f));
                 //encabezado
                 cell = new Cell().Add(tabla2).AddStyle(styleCell);
