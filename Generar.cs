@@ -1634,7 +1634,7 @@ namespace folDigLib
             {
                 //dec = " PESOS CON " + decimales.ToString() + "/100";
                 //dec = $" PESOS {decimales:0,0} /100 M.N.)***";
-                dec = $" {decimales:0,0}/100 ";
+                dec = " " + decimales.ToString("0,0") + "/100 ";
 
                 //dec = $" PESOS {decimales:0,0}/100 M.N.)***";
 
@@ -1644,7 +1644,7 @@ namespace folDigLib
             else
             {
                 //dec = " PESOS CON " + decimales.ToString() + " /100";
-                dec = $" {decimales:0,0}/100 ";
+                dec = " " + decimales.ToString("0,0") + "/100 ";
 
             }
             var res = NumeroALetras(Convert.ToDouble(entero)) + " " + monDescripcion + " " + dec + " " + simbolo;
