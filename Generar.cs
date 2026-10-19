@@ -852,12 +852,12 @@ namespace folDigLib
                 //emisor rfc
                 cell = new Cell().Add(new Paragraph("RFC:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.emisorRFC).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.emisorRFC ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //receptor rfc
                 cell = new Cell().Add(new Paragraph("RFC:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.receptorRfc).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.receptorRfc ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //emisor regimen fiscal
                 cell = new Cell().Add(new Paragraph("Régimen Fiscal:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
@@ -872,22 +872,22 @@ namespace folDigLib
                 //emisor codigo postal
                 cell = new Cell().Add(new Paragraph("Código postal:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.emisorCodigoPostal).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.emisorCodigoPostal ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //receptor codigo postal
                 cell = new Cell().Add(new Paragraph("Código postal:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.receptorDomicilioFiscal).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.receptorDomicilioFiscal ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //emisor lugar expedicion
                 cell = new Cell().Add(new Paragraph("Lugar Expedición:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.lugarExpedicion).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.lugarExpedicion ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //receptor Uso cfdi
                 cell = new Cell().Add(new Paragraph("Uso de CFDI:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.usoCFDI).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.usoCFDI ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //emisor CIF
                 cell = new Cell().Add(new Paragraph("CIF:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
@@ -1516,27 +1516,27 @@ namespace folDigLib
                 //factura
                 cell = new Cell().Add(new Paragraph("Factura:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.serie + "   " + spDatos.folio).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph((spDatos.serie ?? "") + "   " + (spDatos.folio ?? "")).SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //moneda
                 cell = new Cell().Add(new Paragraph("Moneda:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.moneda).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.moneda ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //exportacion
                 cell = new Cell().Add(new Paragraph("Exportación:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.exportacion + " " + spDatos.exportacionDesc).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph((spDatos.exportacion ?? "") + " " + (spDatos.exportacionDesc ?? "")).SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //version
                 cell = new Cell().Add(new Paragraph("Versión:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.version).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.version ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //metodo de pago
                 cell = new Cell().Add(new Paragraph("Método de pago:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.metodoPago + " " + spDatos.metodoPagoDesc).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph((spDatos.metodoPago ?? "") + " " + (spDatos.metodoPagoDesc ?? "")).SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //rfc pac
                 cell = new Cell().Add(new Paragraph("RFC PAC:").SetFontSize(fontSize)).AddStyle(styleCell);
@@ -1546,17 +1546,17 @@ namespace folDigLib
                 //fecha
                 cell = new Cell().Add(new Paragraph("Fecha:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.fecha).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.fecha ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //forma de pago
                 cell = new Cell().Add(new Paragraph("Forma de pago:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.formaPago + " " + spDatos.formaPagoDesc).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph((spDatos.formaPago ?? "") + " " + (spDatos.formaPagoDesc ?? "")).SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //tipo
                 cell = new Cell().Add(new Paragraph("Tipo:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.tipoDeComprobanteDesc).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.tipoDeComprobanteDesc ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //vacio1
                 cell = new Cell().Add(new Paragraph("").SetFontSize(fontSize)).AddStyle(styleCell);
@@ -1566,7 +1566,7 @@ namespace folDigLib
                 //tipo de cambio
                 cell = new Cell().Add(new Paragraph("Tipo de cambio:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.tipoCambio.ToString()).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.tipoCambio != null ? spDatos.tipoCambio.ToString() : "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //pagina
                 PdfPage page = docEvent.GetPage();
