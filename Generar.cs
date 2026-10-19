@@ -1458,16 +1458,53 @@ namespace folDigLib
                     //.ShowTextAligned("Textyo agregado", 612, 0, TextAlignment.RIGHT)
                     .Close();
 
-                if(spDatos.Estatus == "Cancelado")
+                if (string.Equals(spDatos.Estatus, "Cancelado", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    string cancelado = @"C:\Temp\timbrar\cancelado.png";
-                    iText.Layout.Element.Image maCancelado = new iText.Layout.Element.Image(ImageDataFactory.Create(cancelado));
-                    maCancelado.SetWidth(600);
-                    maCancelado.SetHeight(600);
+                    try
+                    {
+                        string rutaCancelado = null;
+                        string[] posiblesRutas = new[]
+                        {
+                            System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "App_Data", "Facturacion", "cancelado.png"),
+                            System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Content", "Images", "cancelado.png"),
+                            System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Content", "Images", "cancelado.png"),
+                            @"C:\Temp\timbrar\cancelado.png"
+                        };
 
-                    iText.Kernel.Geom.Rectangle rectangle = new iText.Kernel.Geom.Rectangle(120, 200, 400, 400);
-                    Canvas canvas2 = new Canvas(page, rectangle);
-                    canvas2.Add(maCancelado).Close();
+                        foreach (var ruta in posiblesRutas)
+                        {
+                            if (!string.IsNullOrWhiteSpace(ruta) && System.IO.File.Exists(ruta))
+                            {
+                                rutaCancelado = ruta;
+                                break;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(rutaCancelado) && System.IO.File.Exists(rutaCancelado))
+                        {
+                            iText.Layout.Element.Image maCancelado = new iText.Layout.Element.Image(ImageDataFactory.Create(rutaCancelado));
+                            maCancelado.SetWidth(600);
+                            maCancelado.SetHeight(600);
+
+                            iText.Kernel.Geom.Rectangle rectangle = new iText.Kernel.Geom.Rectangle(120, 200, 400, 400);
+                            Canvas canvas2 = new Canvas(page, rectangle);
+                            canvas2.Add(maCancelado).Close();
+                        }
+                        else
+                        {
+                            // Marca de agua nativa si no existe archivo de imagen en disco
+                            Canvas canvas2 = new Canvas(page, page.GetPageSize());
+                            Paragraph pCancelado = new Paragraph("CANCELADO")
+                                .SetFont(boldP)
+                                .SetFontSize(65f)
+                                .SetFontColor(ColorConstants.RED)
+                                .SetOpacity(0.3f);
+
+                            canvas2.ShowTextAligned(pCancelado, 300f, 400f, 1, TextAlignment.CENTER, VerticalAlignment.MIDDLE, 0.785398f);
+                            canvas2.Close();
+                        }
+                    }
+                    catch { }
                 }
 
 
