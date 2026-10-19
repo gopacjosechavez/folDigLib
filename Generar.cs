@@ -742,10 +742,34 @@ namespace folDigLib
 
             public void documento(spSoaWeb_CFDI40_DatosGenerales_Result spDatos, List<spSoaWeb_CFDI40_Conceptos_Result> spConceptos, List<spSoaWeb_CFDI40_Impuestos_Result> spImpuestos, List<spSoaWeb_CFDI40_DatosRealacionados_Result> spDatosRelacionados, int totalPaginas, string nombrePDF, string tipoDeImpresion)
             {
-                pathLogo = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Datos", "Imagenes", "Logo.bmp");
-                if (!System.IO.File.Exists(pathLogo))
+                pathLogo = "";
+                // 1. Si FacturacionService o el llamador proporciono una ruta valida existente (Web o SP)
+                if (!string.IsNullOrWhiteSpace(spDatos.imagenReporte) && System.IO.File.Exists(spDatos.imagenReporte))
                 {
-                    pathLogo = System.IO.Directory.GetCurrentDirectory() + "\\Datos\\Imagenes\\Logo.bmp";
+                    pathLogo = spDatos.imagenReporte;
+                }
+                else
+                {
+                    // 2. Compatibilidad hacia atras con ERP Windows de escritorio (Datos\Imagenes\Logo.bmp)
+                    // Se valida que el archivo exista y no sea un mapa de bits dummy de 58 bytes (evita recuadro negro)
+                    string legacyPath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Datos", "Imagenes", "Logo.bmp");
+                    if (!System.IO.File.Exists(legacyPath))
+                    {
+                        legacyPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Datos", "Imagenes", "Logo.bmp");
+                    }
+
+                    if (System.IO.File.Exists(legacyPath))
+                    {
+                        try
+                        {
+                            var fi = new System.IO.FileInfo(legacyPath);
+                            if (fi.Length > 200)
+                            {
+                                pathLogo = legacyPath;
+                            }
+                        }
+                        catch { }
+                    }
                 }
 
                 MemoryStream ms = new MemoryStream();
@@ -756,7 +780,7 @@ namespace folDigLib
 
                 //Genera imagen del logotipo
                 iText.Layout.Element.Image img = null;
-                if (System.IO.File.Exists(pathLogo))
+                if (!string.IsNullOrWhiteSpace(pathLogo) && System.IO.File.Exists(pathLogo))
                 {
                     try
                     {
@@ -868,12 +892,12 @@ namespace folDigLib
                 //emisor CIF
                 cell = new Cell().Add(new Paragraph("CIF:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.emisorCIF).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.emisorCIF ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //receptor CIF
                 cell = new Cell().Add(new Paragraph("CIF:").SetFontSize(fontSize)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT);
                 tablaDetalles.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.receptorCIF).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.receptorCIF ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tablaDetalles.AddCell(cell);
                 //---------------------------------------------------
                 //Tabla titulos (Emisor/Receptor)
@@ -1005,7 +1029,7 @@ namespace folDigLib
                         tableImpuestos.AddCell(cell);
                         cell = new Cell().Add(new Paragraph(imp.tasaOCuota.ToString()).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
                         tableImpuestos.AddCell(cell);
-                        cell = new Cell().Add(new Paragraph(imp.importeBase.Value.ToString(simboloMoneda + "#,###,##0.00")).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
+                        cell = new Cell().Add(new Paragraph((imp.importeBase.HasValue ? imp.importeBase.Value.ToString(simboloMoneda + "#,###,##0.00") : "")).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
                         tableImpuestos.AddCell(cell);
                         cell = new Cell().Add(new Paragraph(imp.importeImpuesto.ToString(simboloMoneda + "#,###,##0.00")).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
                         tableImpuestos.AddCell(cell);
@@ -1089,7 +1113,7 @@ namespace folDigLib
                     tablaImpuestos.AddCell(cell);
                     cell = new Cell().Add(new Paragraph(imp.tasaOCuota.ToString()).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
                     tablaImpuestos.AddCell(cell);
-                    cell = new Cell().Add(new Paragraph(imp.importeBase.Value.ToString(simboloMoneda + "#,###,##0.00")).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
+                    cell = new Cell().Add(new Paragraph((imp.importeBase.HasValue ? imp.importeBase.Value.ToString(simboloMoneda + "#,###,##0.00") : "")).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
                     tablaImpuestos.AddCell(cell);
                     cell = new Cell().Add(new Paragraph(imp.importeImpuesto.ToString(simboloMoneda + "#,###,##0.00")).SetFontSize(fontSizeImpuestos)).AddStyle(styleCell);
                     tablaImpuestos.AddCell(cell);
@@ -1156,20 +1180,20 @@ namespace folDigLib
                 //Primer renglon
                 cell = new Cell().Add(new Paragraph("Número de serie del certificado:").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT).SetBold();
                 tablaTimbre.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.noCertificado).SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
+                cell = new Cell().Add(new Paragraph(spDatos.noCertificado ?? "").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
                 tablaTimbre.AddCell(cell);
                 cell = new Cell().Add(new Paragraph("Folio Fiscal UUID:").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT).SetBold();
                 tablaTimbre.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.timbreUUID).SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
+                cell = new Cell().Add(new Paragraph(spDatos.timbreUUID ?? "").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
                 tablaTimbre.AddCell(cell);
                 //Segundo renglon
                 cell = new Cell().Add(new Paragraph("Fecha y hora del certificado:").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT).SetBold();
                 tablaTimbre.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.fechaHoraTimbrado).SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
+                cell = new Cell().Add(new Paragraph(spDatos.fechaHoraTimbrado ?? "").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
                 tablaTimbre.AddCell(cell);
                 cell = new Cell().Add(new Paragraph("Número de serie del certificado del SAT:").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.RIGHT).SetBold();
                 tablaTimbre.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.numeroCertificadoSat).SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
+                cell = new Cell().Add(new Paragraph(spDatos.numeroCertificadoSat ?? "").SetFontSize(fontSizeTimbre)).AddStyle(styleCell).SetTextAlignment(TextAlignment.LEFT);
                 tablaTimbre.AddCell(cell);
                 doc.Add(tablaTimbre);
 
@@ -1192,7 +1216,7 @@ namespace folDigLib
                 //------------------------------------------------------------------
                 //   selloDigital
                 //------------------------------------------------------------------
-                if (spDatos.selloDigital != "")
+                if (!string.IsNullOrEmpty(spDatos.selloDigital))
                 {
                     largo = spDatos.selloDigital.Length;
                     renglones = Convert.ToDecimal(largo) / Convert.ToDecimal(longitud);
@@ -1237,7 +1261,7 @@ namespace folDigLib
                 //------------------------------------------------------------------
                 //   selloDigitalSAT
                 //------------------------------------------------------------------
-                if (spDatos.sellloSAT != "")
+                if (!string.IsNullOrEmpty(spDatos.sellloSAT))
                 {
                     largo = spDatos.sellloSAT.Length;
                     renglones = Convert.ToDecimal(largo) / Convert.ToDecimal(longitud);
@@ -1278,7 +1302,7 @@ namespace folDigLib
                 //------------------------------------------------------------------
                 //   Cadena original
                 //------------------------------------------------------------------
-                if (spDatos.cadenaOriginal != "")
+                if (!string.IsNullOrEmpty(spDatos.cadenaOriginal))
                 {
                     largo = spDatos.cadenaOriginal.Length;
                     renglones = Convert.ToDecimal(largo) / Convert.ToDecimal(longitud);
@@ -1557,12 +1581,12 @@ namespace folDigLib
                 //oc
                 cell = new Cell().Add(new Paragraph("OC:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.ordenCompra).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.ordenCompra ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //condiciones de pago
                 cell = new Cell().Add(new Paragraph("Condiciones de pago:").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
-                cell = new Cell().Add(new Paragraph(spDatos.condicionesDePago).SetFontSize(fontSize)).AddStyle(styleCell);
+                cell = new Cell().Add(new Paragraph(spDatos.condicionesDePago ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
                 tabla2.AddCell(cell);
                 //vacio2
                 cell = new Cell().Add(new Paragraph("").SetFontSize(fontSize)).AddStyle(styleCell);
@@ -1578,7 +1602,7 @@ namespace folDigLib
                 }
                 else
                 {
-                    cell = new Cell().Add(new Paragraph(spDatos.emisorNombre ?? "").SetFontSize(fontSize)).AddStyle(styleCell);
+                    cell = new Cell().Add(new Paragraph("")).AddStyle(styleCell);
                 }
                 tabla.AddCell(cell).SetBorderBottom(new SolidBorder(ColorConstants.BLACK, 0.5f));
                 //encabezado
